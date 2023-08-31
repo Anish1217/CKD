@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>D3 Bar Chart</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <svg width="500" height="300"></svg>
+
+  <script>
+
+    // Data for the chart
+    const data = [
+      { name: "Apples", value: 10 },
+      { name: "Oranges", value: 5 },
+      { name: "Bananas", value: 8 },
+      { name: "Grapes", value: 12 },
+      { name: "Pineapples", value: 3 }
+    ];
+
+    // Set up the chart dimensions
+    const width = 500;
+    const height = 300;
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+
+    // Create the SVG element for the chart
+    const svg = d3.select("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    // Create the chart container
+    const chart = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Set up the scales for the chart
+    const xScale = d3.scaleBand()
+      .domain(data.map(d => d.name))
+      .range([0, chartWidth])
+      .padding(0.1);
+
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.value)])
+      .range([chartHeight, 0]);
+
+    // Add the bars to the chart
+    chart.selectAll(".bar")
+      .data(data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xScale(d.name))
+        .attr("y", d => yScale(d.value))
+        .attr("width", xScale.bandwidth())
+        .attr("height", d => chartHeight - yScale(d.value));
+
+    // Add the x-axis to the chart
+    chart.append("g")
+      .attr("transform", `translate(0,${chartHeight})`)
+      .call(d3.axisBottom(xScale));
+
+    // Add the y-axis to the chart
+    chart.append("g")
+      .call(d3.axisLeft(yScale));
+
+  </script>
+
+</body>
+</html>
